@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.PermissionDao">
+<resultMap type="com.test.model.Permission" id="resultPer">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<id property="roleId" column="roleId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="token" column="token" javaType="String" jdbcType="VARCHAR"/>
+<result property="url" column="url" javaType="String" jdbcType="VARCHAR"/>
+<result property="description" column="description" javaType="String" jdbcType="VARCHAR"/>
+</resultMap>
+
+<select id="findPermissionByRoleId" parameterType="int" resultMap="resultPer">
+select * from permission a,role_per b where a.status=1 and b.status=1 and a.id = b.permissionid and b.roleid = #{id}
+</select>
+
+</mapper>

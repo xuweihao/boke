@@ -1,0 +1,173 @@
+@charset "utf-8";
+.cn-header,.cn-footer,.cn-body{
+	box-shadow: 5px 5px 7px rgba(33,33,33,.7) ;
+}
+.cn-header {
+	height:125px;
+	/* padding-top:10px; */
+	background-color: 	#5bc0de;
+}
+.cn-body {
+	background-color: 	#4bebd2;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+.cn-header .h-menu {
+	margin-top:40px;
+	padding-left:10px;
+	background-color: #fff;
+	border-radius:5px;
+	font-weight: bold;
+	font-size: 16px;
+}
+.nav-pills>li>a {
+	border-radius:0;
+}
+.cn-footer {
+	height:120px;
+	background-color: 	#5bc0de;
+}
+.h-logo {
+	display:inline-block;
+	height:100px;
+	/* background-color: 	red; */
+}
+.h-logo ul,li{  
+	list-style:none; 
+	margin-left:10px; 
+}
+.h-logo ul li a{  
+	text-decoration:none;  /* 定义是否有下划线 */
+	font-weight: bold;
+	color:#000  ;  
+	background:#ffc;  
+	display:block;  
+	height:5em;  
+	width:5em;
+	text-align:center;
+	-moz-box-shadow: 5px 5px 7px rgba(33,33,33,1)  ; /* firefox */  
+	-webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7)  ; /* Safari and Chrome */
+	box-shadow: 5px 5px 7px rgba(33,33,33,.7)  ;  
+}
+.h-logo ul li a h1 {
+	font-size:4em;
+	font-weight: bold;
+	line-height:normal;
+	margin-top:20px;
+}
+.h-logo ul li{  
+	float:left;  
+}
+.h-logo ul li a{  
+	-webkit-transform:rotate(-6deg);  /* 旋转 */
+	-o-transform:rotate(-6deg); /* Opera */
+	-moz-transform:rotate(-6deg); 
+}
+.h-logo ul li:nth-child(even) a{  
+	-webkit-transform:rotate(6deg);  /* 旋转 */
+	-o-transform:rotate(6deg); /* Opera */
+	-moz-transform:rotate(6deg); 
+}
+.h-logo ul li a:hover{
+	text-decoration:none;
+	color:#000  ;
+	-moz-transform: rotate(360deg);
+	-webkit-transform: rotate(360deg);/* -- 2D旋转360°与放大有影响会没有效果  有待研究 */
+	-o-transform: rotate(360deg);
+	transform: rotate(360deg);
+	
+	-moz-transition: -moz-transform 0.8s ease-in-out; 
+	-webkit-transition: -webkit-transform 0.8s ease-in-out; 
+	-o-transition: -o-transform 0.8s ease-in-out; 
+	transition: transform 0.8s ease-in-out; 
+	position:relative;  
+	z-index:5;  
+}
+.cn-body .b-left,.cn-body .b-right {
+	float:left;
+}
+.cn-body .b-left {
+	width:38%;
+}
+
+.cn-body .b-left .m-left {
+	padding-top:10px;
+	margin-bottom:20px;
+	height:250px;
+	background-color: #FFC78E;
+}
+
+.cn-body .b-left .m-tiwen {
+	
+}
+
+.cn-body .b-left .m-left p{
+	padding:0 5px;
+	max-height:40px;
+	white-space:normal;
+	overflow:hidden;
+	text-overflow : ellipsis;
+}
+
+.cn-body .b-left .m-left .ml-top .img {
+	width: 100px;
+	height: 100px;
+	margin-left:10px;
+}
+.cn-body .b-left .m-left .ml-top .toolbar {
+	float:right;
+	width:55%;
+}
+
+
+.cn-body .b-right {
+	margin-left:2%;
+	width:60%;
+}
+.clear {
+	clear:both;
+}
+.cn-body .g-div {
+	border:3px solid #fff;
+	border-radius:20px;
+	padding:10px 10px;
+	margin-top:10px;
+}
+.cn-body .g-div .g-title {
+	backgroud-color:#80FFFF;
+	font-weight:bold;
+	border-bottom: 1px solid #fff;
+	padding: 0 10px;
+	height:30px;
+	line-height:30px;
+}
+
+.g-users .img {
+	width: 100px;
+	height: 100px;
+	border-radius:20px;
+}
+.g-users .username {
+	margin-left:10px;
+}
+.g-tiwen {
+	height:720px;
+	overflow:hidden;
+}
+.g-tiwen .m-tiwen {
+	height:330px;
+}
+.g-tiwen .m-tiwen p {
+	width:250px;
+	overflow:hidden;
+	text-overflow : ellipsis;
+}
+.g-tiwen .m-tiwen pre {
+	height:250px;
+	overflow:hidden;
+	text-overflow : ellipsis;
+}
+
+.panel-title a {
+	color:#0080FF;
+}

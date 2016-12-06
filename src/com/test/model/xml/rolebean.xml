@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.RoleDao">
+<resultMap type="com.test.model.RoleBean" id="resultRole">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="name" column="name" javaType="String" jdbcType="VARCHAR"/>
+<result property="description" column="description" javaType="String" jdbcType="VARCHAR"/>
+</resultMap>
+
+<select id="findRoleByUserId" parameterType="int" resultMap="resultRole">
+select a.* from rolebean a,user_role b where a.status=1 and b.status=1 and a.id = b.roleid and b.userid=#{id}
+</select>
+</mapper>

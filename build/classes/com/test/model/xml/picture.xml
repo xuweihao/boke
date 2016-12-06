@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.PictureDao">
+<resultMap type="com.test.model.Picture" id="resultPicture">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="name" column="name" javaType="String" jdbcType="VARCHAR"/>
+<result property="url" column="url" javaType="String" jdbcType="VARCHAR"/>
+</resultMap>
+
+<select id="findEntity" resultMap="resultPicture">
+select * from picture where status = 1
+</select>
+
+</mapper>

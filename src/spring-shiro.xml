@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login.jsp" />
+		<property name="successUrl" value="/page/newIndex.jsp" />
+		<property name="unauthorizedUrl" value="/error/noperms.jsp" />
+		
+		<property name="filterChainDefinitions">
+			<value>
+				/login.jsp = anon
+				/login.do = anon
+				/tologin.do = anon
+				/logout = anon
+				/guest/** = anon
+				/guest.do/** = anon
+				/error/noperms.jsp*= anon
+				/*.jsp* = authc
+				/*.do* = authc
+				<!-- /text.do/toInsertText.do = perms[user1:toInsert]   -->
+			</value>
+		</property>
+	</bean>
+	
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+	    <property name="exceptionMappings">  
+	        <props>  
+	            <prop key="org.apache.shiro.authz.UnauthorizedException">error/noperms</prop>
+	        </props>  
+	    </property>  
+	</bean>
+	
+	
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	<!-- 基于ehCache来缓存用户认证信息和授权信息的实现 -->
+		<!-- <property name="cacheManager" ref="cacheManager"/> -->
+	<!-- sessionMode参数设置为native时，那么shrio就将用户的基本认证信息保存到缺省名称为shiro-activeSessionCache 的Cache中 -->
+	    <!-- <property name="sessionMode" value="native" /> -->
+	<!--设置自定义realm -->
+		<property name="realm" ref="monitorRealm" />
+	</bean>
+		
+	<bean id="monitorRealm" class="com.test.util.MonitorRealm">
+		<!-- <property name="credentialsMatcher">
+           <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+               <property name="hashAlgorithmName" value="MD5"/>
+              true means hex encoded, false means base64 encoded
+               <property name="storedCredentialsHexEncoded" value="true"/>
+               迭代次数
+               <property name="hashIterations" value="2" />
+           </bean>
+	    </property> -->
+	</bean>
+	
+	    
+	<!-- <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManager" ref="ehCacheManager"/>
+		<property name="cacheManagerConfigFile" value="classpath:shiro_ehcache.xml"/> 
+	</bean> -->
+	
+	
+	<!-- <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/> -->
+	
+	
+	
+	
+	<!-- securityManager -->
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+		<property name="arguments" ref="securityManager" />
+	</bean>
+	
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	
+	<!-- AOP式方法级权限检查  -->
+	<bean  
+	class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"  
+	depends-on="lifecycleBeanPostProcessor" >  
+		<property name="proxyTargetClass" value="true" />
+	</bean>  
+	
+	<bean
+	class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+    
+</beans>

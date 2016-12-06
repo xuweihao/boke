@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.PinglunDao">
+<resultMap type="com.test.model.Pinglun" id="resultPl">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="text" column="text" javaType="String" jdbcType="VARCHAR"/>
+<result property="NO" column="NO" javaType="Integer" jdbcType="INTEGER"/>
+<result property="num" column="num" javaType="Integer" jdbcType="INTEGER"/>
+<result property="textId" column="textId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="userName" column="userName" javaType="String" jdbcType="VARCHAR"/>
+<result property="userId" column="userId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="textName" column="textName" javaType="String" jdbcType="VARCHAR"/>
+<result property="type" column="type" javaType="Integer" jdbcType="INTEGER"/>
+<result property="createTime" column="createTime" javaType="String" jdbcType="TIMESTAMP"/>
+</resultMap>
+<sql id="pinglun">
+id,text,NO,num,textId,userName,userId,date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime
+</sql>
+	<select id="findPinglunByTextId" parameterType="int" resultMap="resultPl">
+	select
+	<include refid="pinglun"/> 
+	 from pinglun where textId = #{id} and NO=0 and status=1;
+	</select>
+
+	<select id="findPinglunByNO" parameterType="int" resultMap="resultPl">
+	select 
+	<include refid="pinglun"/> 
+	 from pinglun where NO=#{id} and status=1 order by num asc;
+	</select>
+
+
+	<insert id="insertEntity" parameterType="com.test.model.Pinglun">
+	<selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+		SELECT @@IDENTITY AS id
+	</selectKey>
+	insert into pinglun (id,NO,num,text,textId,userId,userName,createTime,status)
+				 values (#{id,javaType=Integer,jdbcType=INTEGER},
+				 		 #{NO,javaType=Integer,jdbcType=INTEGER},
+				 		 1,
+				 		 #{text,javaType=String,jdbcType=VARCHAR},
+				 		 #{textId,javaType=Integer,jdbcType=INTEGER},
+				 		 #{userId,javaType=Integer,jdbcType=INTEGER},
+				 		 #{userName,javaType=String,jdbcType=VARCHAR},
+				 		 sysdate(),
+				 		 1
+				 		 )
+	</insert>
+	
+	<insert id="insertHuifu" parameterType="com.test.model.Pinglun">
+	<selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+		SELECT @@IDENTITY AS id
+	</selectKey>
+	insert into pinglun (NO,num,text,textId,userId,userName,createTime,status)
+ 				select #{NO,javaType=Integer,jdbcType=INTEGER},
+				 	   max(num)+1,
+				 	   #{text,javaType=String,jdbcType=VARCHAR},
+				 	   #{textId,javaType=Integer,jdbcType=INTEGER},
+				 	   #{userId,javaType=Integer,jdbcType=INTEGER},
+				 	   #{userName,javaType=String,jdbcType=VARCHAR},
+				 	   sysdate(),
+				 	   1 from pinglun where NO=#{NO}
+	</insert>
+	
+	<update id="deleteEntityById" parameterType="int">
+		update pinglun set status=0 where id = #{id}
+	</update>	
+	
+	
+	<select id="findPinglunByUser" resultMap="resultPl">
+		select p.id,p.text,p.textId,p.userName,t.title textName,date_format(p.createTime,'%Y-%m-%d %H:%i:%s') createTime,p.userId,t.type
+		 from pinglun p,textbook t
+		where p.textId = t.id and p.status=1 and t.user=#{userId} 
+			<![CDATA[  and p.userId <> #{userId} ]]>
+		order by p.createTime desc
+		limit ${page},${num} 
+	</select>
+	
+	<select id="selectPLCountByUser" resultType="int">
+		select count(p.id)
+		 from pinglun p,textbook t
+		where p.textId = t.id and p.status=1 and t.user=#{userId} and p.NO=0 
+			<![CDATA[  and p.userId <> #{userId} ]]>
+		order by p.createTime desc
+	</select>
+	
+</mapper>

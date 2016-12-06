@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.TextDao">
+<resultMap type="com.test.model.Text" id="resultText">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="type" column="type" javaType="Integer" jdbcType="INTEGER"/>
+<result property="text" column="text" javaType="String" jdbcType="VARCHAR"/>
+<result property="title" column="title" javaType="String" jdbcType="VARCHAR"/>
+<result property="userName" column="userName" javaType="String" jdbcType="VARCHAR"/>
+<result property="userId" column="userId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="createTime" column="createTime" javaType="String" jdbcType="TIMESTAMP"/>
+<result property="visitTimes" column="visitTimes" javaType="String" jdbcType="VARCHAR"/>
+<result property="dianzanCount" column="dianzanCount" javaType="Integer" jdbcType="INTEGER"/>
+<result property="pinglun" column="pinglun" javaType="Integer" jdbcType="INTEGER"/>
+<result property="fileUrl" column="fileUrl" javaType="String" jdbcType="VARCHAR"/>
+</resultMap>
+	<select id="findEntityById" resultMap="resultText">
+	select id,text,title,user userId,(select loginName  from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime,fileUrl,
+			(select count(1) from dianzan where textId = a.id and result="1") dianzanCount
+		 from textbook a
+		where id = #{id} and status=1 
+	</select>
+	
+	<select id="findEntity" parameterType="int" resultMap="resultText">
+	select id,text,title,user userId,(select loginName from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime,fileUrl
+		 from textbook where type = #{obj} and status=1 order by createTime desc
+	limit 0,10
+	</select>
+	
+	
+	<select id="findEntityMost" parameterType="int" resultMap="resultText">
+	select id,text,title,user userId,(select loginName from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime
+		 from textbook where type=#{type} and status=1  order by visitTimes desc
+	limit 0,10
+	</select>
+	
+	<select id="selectTextByUserId" resultMap="resultText">
+	select id,text,title,user userId,(select loginName  from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime,
+			(select count(1) from dianzan where textId = a.id and result="1") dianzanCount,
+			(select count(1) from pinglun where textId = a.id and num=1) pinglun
+		 from textbook a
+		where user = #{UserId} and type=1 and status=1 
+	limit ${page},${num} 
+	</select>
+	
+	<select id="selectTiWenByUserId" resultMap="resultText">
+	select id,text,title,user userId,(select loginName  from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime,
+			(select count(1) from dianzan where textId = a.id and result="1") dianzanCount,
+			(select count(1) from pinglun where textId = a.id and num=1) pinglun
+		 from textbook a
+		where user = #{UserId} and type=2 and status=1 
+	</select>
+	
+	<select id="selectCountByUserId" resultType="int">
+	select count(id)
+		 from textbook 
+		where user = #{UserId} and type=1 and status=1 
+	</select>
+	
+	<insert id="insertEntity" parameterType="com.test.model.Text">
+	<selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+		SELECT @@IDENTITY AS id
+	</selectKey>
+	insert into textbook (id,type,text,createTime,user,title,status,fileUrl)
+				values (#{id,javaType=Integer,jdbcType=INTEGER},
+						#{type,javaType=Integer,jdbcType=INTEGER},
+						#{text,javaType=String,jdbcType=VARCHAR},
+						sysdate(),
+						#{userId,javaType=Integer,jdbcType=INTEGER},
+						#{title,javaType=String,jdbcType=VARCHAR},
+						1,
+						#{fileUrl,javaType=String,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateEntityById" parameterType="com.test.model.Text">
+	update textbook set 
+		text=#{text,javaType=String,jdbcType=VARCHAR},
+		title=#{title,javaType=String,jdbcType=VARCHAR},
+		visitTimes=#{visitTimes,javaType=String,jdbcType=VARCHAR}
+		where user=#{userId} and id =#{id}
+	</update>
+	
+	<update id="deleteEntityById" parameterType="int">
+	update textbook 
+		set status = 0
+	where id = #{id}
+	</update>
+	
+	
+	<select id="selectThingByType" resultMap="resultText">
+	select id,text,title,user userId,(select loginName from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime
+		 from textbook where type=#{type} and status=1  order by createTime desc
+	limit ${page},${num} 
+	</select>
+	
+	
+	<select id="selectThingByType2" resultMap="resultText">
+	select id,text,title,user userId,(select loginName from userbean where id=user) userName,coalesce(visitTimes,0) visitTimes,
+			date_format(createTime,'%Y-%m-%d %H:%i:%s') createTime
+		 from textbook where type=#{type} and status=1  order by visitTimes desc
+	limit ${page},${num} 
+	</select>
+	
+	<select id="selectCountByType" resultType="int">
+	select count(id)
+		 from textbook where type=#{type} and status=1  order by visitTimes desc
+	</select>
+
+</mapper>

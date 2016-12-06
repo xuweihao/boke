@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.DianZanDao">
+<resultMap type="com.test.model.DianZan" id="resultDZ">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="userId" column="userId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="textId" column="textId" javaType="Integer" jdbcType="INTEGER"/>
+<result property="result" column="result" javaType="String" jdbcType="VARCHAR"/>
+<result property="createTime" column="createTime" javaType="String" jdbcType="TIMESTAMP"/>
+</resultMap>
+	<select id="findEntity" parameterType="com.test.model.DianZan" resultMap="resultDZ">
+	select * from dianzan where userId = #{userId} and textId = #{textId}
+	</select>
+	
+	<select id="selectDianZan" parameterType="map" resultType="String">
+	select result from dianzan where userId = #{userId}  and textId = #{textId}
+	</select>
+
+	<insert id="insertEntity" parameterType="com.test.model.DianZan">
+	<selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+		SELECT @@IDENTITY AS id
+	</selectKey>
+	insert into dianzan (id,userId,textId,result,createTime)
+				   value(#{id,javaType=Integer,jdbcType=INTEGER},
+				   		 #{userId,javaType=Integer,jdbcType=INTEGER},
+				   		 #{textId,javaType=Integer,jdbcType=INTEGER},
+				   		 "1",
+				   		 sysdate())
+	</insert>
+	
+	<update id="updateEntityById" parameterType="com.test.model.DianZan">
+	update dianzan
+		<set>
+			<if test="result==1">
+			result="0"
+			</if>
+			<if test="result==0">
+			result="1"
+			</if>
+		</set>
+	where id = #{id}
+	</update>
+</mapper>

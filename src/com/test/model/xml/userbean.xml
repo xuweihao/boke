@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.test.dao.UserDao">
+<resultMap type="com.test.model.UserBean" id="resultUser">
+<id property="id" column="id" javaType="Integer" jdbcType="INTEGER"/>
+<result property="loginName" column="loginName" javaType="String" jdbcType="VARCHAR"/>
+<result property="passwd" column="passwd" javaType="String" jdbcType="VARCHAR"/>
+<result property="name" column="name" javaType="String" jdbcType="VARCHAR"/>
+<result property="sex" column="sex" javaType="Integer" jdbcType="INTEGER"/>
+<result property="description" column="description" javaType="String" jdbcType="VARCHAR"/>
+<result property="visitTimes" column="visitTimes" javaType="String" jdbcType="VARCHAR"/>
+<result property="url" column="url" javaType="String" jdbcType="VARCHAR"/>
+<result property="email" column="email" javaType="String" jdbcType="VARCHAR"/>
+<result property="telephone" column="telephone" javaType="String" jdbcType="VARCHAR"/>
+<result property="createTime" column="createTime" javaType="String" jdbcType="VARCHAR"/>
+</resultMap>
+<sql id="user">
+	id,loginName,passwd,name,sex,description,visitTimes,url,email,telephone,date_format(createTime,'%Y-%m-%d %H:%m:%s') createTime
+</sql>
+<select id="login" parameterType="com.test.model.UserBean" resultMap="resultUser">
+	select <include refid="user"/> from userbean where loginName = #{loginName} and passwd = #{passwd} and status =1
+</select>
+
+<select id="findUserByName" parameterType="String" resultMap="resultUser">
+	select <include refid="user"/> from userbean where loginName = #{loginName}
+</select>
+
+<select id="findEntityById" parameterType="int" resultMap="resultUser">
+	select <include refid="user"/> from userbean where id=#{id}
+</select>
+
+<select id="selectUserMost" resultMap="resultUser">
+	select <include refid="user"/> from userbean order by visitTimes desc
+	limit 0,6
+</select>
+
+<insert id="insertEntity" parameterType="com.test.model.UserBean">
+	<selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+		SELECT @@IDENTITY AS id
+	</selectKey>
+	insert into userbean(id,loginName,passwd,name,sex,description,visitTimes,url,email,telephone,createTime,status)
+				 values (#{id,javaType=Integer,jdbcType=INTEGER},
+						 #{loginName,javaType=String,jdbcType=VARCHAR},
+						 #{passwd,javaType=String,jdbcType=VARCHAR},
+						 #{name,javaType=String,jdbcType=VARCHAR},
+						 #{sex,javaType=Integer,jdbcType=INTEGER},
+						 #{description,javaType=String,jdbcType=VARCHAR},
+						 "0",
+						 #{url,javaType=String,jdbcType=VARCHAR},
+						 #{email,javaType=String,jdbcType=VARCHAR},
+						 #{telephone,javaType=String,jdbcType=VARCHAR},
+						 sysdate(),
+						 1)
+</insert>
+
+<update id="updateUserById" parameterType="com.test.model.UserBean">
+ 	update userbean set visitTimes=#{visitTimes} where id = #{id}
+</update>
+
+<update id="updateEntityById" parameterType="com.test.model.UserBean">
+	update userbean
+	<set>
+		<if test="passwd !='' and passwd !=null">
+			passwd = #{passwd,javaType=String,jdbcType=VARCHAR},
+		</if>
+		<if test="name !='' and name !=null">
+			name = #{name,javaType=String,jdbcType=VARCHAR},
+		</if>
+		<if test="sex !='' and sex !=null">
+			sex = #{sex,javaType=Integer,jdbcType=INTEGER},
+		</if>
+		<if test="description !='' and description !=null">
+			description = #{description,javaType=String,jdbcType=VARCHAR},
+		</if>
+		<if test="url !='' and url !=null">
+			url = #{url,javaType=String,jdbcType=VARCHAR},
+		</if>
+		<if test="email !='' and email !=null">
+			email = #{email,javaType=String,jdbcType=VARCHAR},
+		</if>
+		<if test="telephone !='' and telephone !=null">
+			telephone = #{telephone,javaType=String,jdbcType=VARCHAR},
+		</if>
+	</set>
+	where id=#{id}
+</update>
+
+
+<select id="selectHYbyDate" parameterType="map" resultType="int">
+	select count(id) from(
+		select id from textbook where id = #{id} and status=1 and createTime like '%${time}%'
+		union
+		select id from pinglun where userId = #{id} and status=1 and createTime like '%${time}%'
+		union
+		select id from dianzan where userId = #{id} and createTime like '%${time}%'
+	) c
+</select>
+</mapper>
